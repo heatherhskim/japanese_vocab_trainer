@@ -1,0 +1,71 @@
+import random
+import csv
+
+def decide_level():
+    while True:
+        level = int(input("Which level do you want to check? 5 for N5, 4 for N4, 3 for N3, 2 for N2, 1 for N1.: "))
+        if 1<=level<=5:
+            return level
+        else:
+            print("Invalid input, please input number from 1 to 5.")
+
+
+def load_wordfile_csv(level):
+    filename = f"n{level}_wordlist.csv"
+    level_wordlist = []
+    with open(filename, encoding='utf-8-sig') as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            level_wordlist.append(row)
+    return level_wordlist
+
+# # N5단어리스트... 10개씩? 20개씩? 30개씩? 이렇게 공부할 단어 개수를 처음에 정하게 하고, 다 끝나면 Proceed ? or do you want to review? 이런 식으로 물어보기
+# def studynum():
+#     vocabnum = int(input(print("How many words do you want to study?: ")))
+#     if True:
+#         # vocabnum개의 단어를 리스트에서 랜덤으로 추출
+#     else:
+#         "Invalid input."
+
+def checkvocab(level_wordlist):
+    original_wordlist = level_wordlist.copy()                             # copy original
+    unknown_vocab = []                                       # 레벨 실행 할 때 '모르는 단어'만 따로 저장할 리스트
+    known_count = 0                                          # 아는 단어로 표시하면 1씩 증가
+    for vocabs in original_wordlist:
+        while True:
+            print(f"Do you know this word?: {vocabs['word']}")
+            knowledge = input("Press Y if yes, N if no.")
+            if knowledge.upper() == 'N':
+                print(f"{vocabs['word']}: {vocabs['pronunciation']}, {vocabs['definition']}\n{vocabs['example']}\n")
+                unknown_vocab.append(vocabs)
+                original_wordlist.remove(vocabs)
+                break
+            elif knowledge.upper() == 'Y':
+                known_count += 1
+                original_wordlist.remove(vocabs)
+                break
+            else:
+                print("Invalid input. Please enter the correct alphabet.")
+            
+    # 아는 단어, 모르는 단어 개수 세 주기
+    print("\nReview: You know %d words. You need improvement in %d words." %(known_count,(len(level_wordlist)-known_count))) 
+
+
+
+
+# 단어 리스트 출력될 때... 딕셔너리처럼 보이게 하지 않고 일렬로 줄바꿈해서 깔끔하게 출력하기
+# 잘못된 키 입력했을 때 '다시' 물어보는 기능 넣기
+# 왜인지 모르겠지만 단어리스트 끝까지 안 가고 '시로이'에서 끊김... 이것도 단어리스트 끝까지 갈 수 있도록 조정하기
+# 단어순서 랜덤으로 바꿔서 출력하기
+# checklevel() -> studynum() -> checkvocab() -> Display and ask to repeat -> Repeat checkvocab() with new_n5_vocab
+    
+def run():
+    level = decide_level()
+    level_wordlist = load_wordfile_csv(level)
+    current_vocab = level_wordlist
+    while True:
+        current_vocab = checkvocab(current_vocab)
+
+
+run()
+
